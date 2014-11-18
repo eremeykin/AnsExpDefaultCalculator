@@ -10,6 +10,7 @@ import ansexp.toolkit.DataSource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -53,7 +54,6 @@ public class DefaultCalculator implements Calculateable {
     EnumMap<Vars, String> v = new EnumMap<>(Vars.class);
 
     public DefaultCalculator() {
-        System.out.println("Created!!");
     }
 
     public String printAllVars() {
@@ -67,9 +67,8 @@ public class DefaultCalculator implements Calculateable {
 
     @Override
     public DataSource calculate(DataSource root) {
-        System.out.println("Started calc!!!");
         source = root;
-        this.outputFile = new File("C:\\ProgramData\\AnsExp\\output.txt");
+
         for (Vars var : Vars.values()) {
             this.v.put(var, source.getValueById(var.name()));
         }
@@ -97,10 +96,13 @@ public class DefaultCalculator implements Calculateable {
     }
 
     @Override
-    public File printToFile() {
+    public File printToFile(File pattern) throws IOException {
+        this.outputFile = new File("C:\\ProgramData\\AnsExp\\output.txt");
+        outputFile.createNewFile();
+        
         FileInputStream inputStream = null;
         try {
-            inputStream = new FileInputStream(outputFile);
+            inputStream = new FileInputStream(pattern);
             StringBuffer sBuffer = new StringBuffer();
             int c = 0;
             while (c != -1) {
